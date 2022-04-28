@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お名前を記憶するページ</title>
+    <link rel="stylesheet" href="css/sample.css">
+
+</head>
+
+<body>
+    <header>
+        <h1>お名前を記憶するページ</h1>
+        <p>出会いを恐れるな</p>
+    </header>
+
+    <main>
+
+        <div class="tab_area">
+            <ul class="nomai">
+                <li id="tab" class="tab">記録する</li>
+                <li id="tab" class="tab">思い出す</li>
+                <li id="tab" class="tab">検索する</li>
+            </ul>
+        </div>
+
+
+        <div id="detail" class="content">
+            <dl class="tex">
+                <dt>性別</dt>
+                <dd>
+                    <form>
+                        <div id="sex" class="sex_1">
+                            <label><input type="radio" name="sex" value="女性" class="danjo">
+                                女性</label>
+                            <label><input type="radio" name="sex" value="男性" class="danjo">男性</label>
+                            <label><input type="radio" name="sex" value="その他" class="danjo">
+                                その他</label>
+                        </div>
+                    </form>
+                </dd>
+            </dl>
+            <dl class="tex">
+                <dt>場所</dt>
+                <dd>
+                    <form>
+                        <div id="scene" class="sex_1">
+
+                            <label><input type="radio" name="scene" value="会食" class="danjo">
+                                会食</label>
+                            <label><input type="radio" name="scene" value="プライベート" class="danjo">プライベート</label>
+
+                        </div>
+                    </form>
+                </dd>
+            </dl>
+
+            <dl class="tex">
+                <dt>名前</dt>
+                <dd>
+                    <input type="text" id="name">
+                </dd>
+            </dl>
+
+            <dl class="tex">
+                <dt>備忘</dt>
+                <dd>
+                    <textarea id="text_area"></textarea>
+                </dd>
+            </dl>
+
+            <ul class="nomai">
+                <li id="save" class="tab">Save</li>
+                <li id="clear" class="tab">Clear</li>
+            </ul>
+        </div>
+
+
+        <div id="record" class="content">
+            <h2>思い出したい人</h2>
+
+        </div>
+
+        <div id="search" class="content">
+            <h2>思い出したい人</h2>
+
+            <dl class="tex">
+                <dt>性別</dt>
+                <dd>
+                    <form>
+                        <div id="sexsearh" class="sex_1">
+                            <label><input type="radio" name="sex_search" value="女性" class="danjo">
+                                女性</label>
+                            <label><input type="radio" name="sex_search" value="男性" class="danjo">男性</label>
+                            <label><input type="radio" name="sex_search" value="その他" class="danjo">
+                                その他</label>
+                        </div>
+                    </form>
+                </dd>
+            </dl>
+
+            <dl class="tex">
+                <dt>場所</dt>
+                <dd>
+                    <form>
+                        <div id="scenesearch" class="sex_1">
+
+                            <label><input type="radio" name="scene_search" value="会食" class="danjo">
+                                会食</label>
+                            <label><input type="radio" name="scene_search" value="プライベート" class="danjo">プライベート</label>
+
+                        </div>
+                    </form>
+                </dd>
+            </dl>
+
+        </div>
+
+        <footer>
+            <small>©たかはし</small>
+        </footer>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+        <script>
+
+            // メニュー選択 // 
+            $(function () {
+                let sec = $(".tab"); // tabのクラスを全て取得し、変数secに配列で定義
+                $(".tab").on("click", function () { // tabクリックでイベント発火
+                    $(".active").removeClass("active"); // activeクラスを消す
+                    $(this).addClass("active"); // クリックした箇所にactiveクラスを追加
+                    const index = sec.index(this); // クリックした箇所がタブの何番目か判定し、定数indexとして定義
+                    $(".content").removeClass("show").eq(index).addClass("show"); // showクラスを消して、contentクラスのindex番目にshowクラスを追加
+                    console.log(sec)
+                })
+            })
+
+            // ファイル作成//
+
+
+
+            $("#save").on("click", function () {
+                let chunk = {
+                    danjo: $('input:radio[name="sex"]:checked').val(),
+                    sien: $('input:radio[name="scene"]:checked').val(),
+                    titile: $("#name").val(),
+                    text: $("#text_area").val(),
+                    date: new Date(),
+                };
+                let memoCount = parseInt(localStorage.getItem("memoCount"), 10);
+
+                let jsonchunk = JSON.stringify(chunk);
+                if (!memoCount)
+                    memoCount = 0;
+
+                localStorage.setItem(`${memoCount}`, jsonchunk);
+                localStorage.setItem("memoCount", memoCount + 1);
+                record.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${(chunk.titile)}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${(chunk.text)}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
+                    <dd>${(chunk.sien)}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${(chunk.danjo)}</dd></dl></div >`;
+
+
+            });
+
+            document.addEventListener("DOMContentLoaded", (event) => {
+                let record = document.getElementById("record");
+                let memoCount = parseInt(localStorage.getItem("memoCount"), 10);
+                let count = 0;
+                let chunk;
+                while (count < memoCount) {
+                    let jsonchunk = localStorage.getItem(`${count}`);
+                    console.log(localStorage);
+                    let chunk = JSON.parse(jsonchunk);
+                    console.log(chunk);
+                    record.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${(chunk.titile)}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${(chunk.text)}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
+                    <dd>${(chunk.sien)}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${(chunk.danjo)}</dd></dl></div >`;
+
+
+                    count++;
+                }
+            });
+
+            /*検索機能*/
+
+            const list = function () {
+
+                for (var i = 0; i < localStorage.length; i++) {
+                    let jsonlist = localStorage.getItem(i);
+                    let chunks = JSON.parse(jsonlist);
+                    console.log(chunks);
+                }
+            }
+
+            list();
+
+            $("input[name='sex_search']").change(function () {
+
+                for (var i = 0; i < localStorage.length; i++) {
+                    let jsonlist = localStorage.getItem(i);
+                    let chunks = JSON.parse(jsonlist);
+                    console.log(chunks);
+
+
+                    const selectdata = $("input[name='sex_search']:checked").val();
+
+                    if (selectdata === chunks.danjo) {
+                        console.log(chunks);
+
+                    };
+
+
+
+
+                }
+            });
+
+
+
+            /*クリア*/
+
+            $("#clear").on("click", function () {
+                let memoCount = parseInt(localStorage.getItem("memoCount"), 10);
+                if (!memoCount)
+                    memoCount = 0;
+
+                localStorage.removeItem(`${memoCount}`);
+
+                $('input:radio[name="sex"]:checked').prop('checked', false); /*外すという意味*/
+                $('input:radio[name="scene"]:checked').prop('checked', false); /*外すという意味*/
+                $("#text_area").val("");
+                $("#name").val("");
+            });
+
+
+
+
+
+        </script>
+
+
+    </main>
+
+</body>
+
+</html>
