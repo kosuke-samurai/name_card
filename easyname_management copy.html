@@ -84,7 +84,6 @@
         </div>
 
         <div id="search" class="content">
-            <h2>思い出したい人</h2>
 
             <dl class="tex">
                 <dt>性別</dt>
@@ -116,7 +115,16 @@
                 </dd>
             </dl>
 
+            <div id="searchresult">
+                <h2>思い出したい人</h2>
+
+            </div>
         </div>
+
+
+
+
+
 
         <footer>
             <small>©たかはし</small>
@@ -194,7 +202,12 @@
 
             list();
 
+
             $("input[name='sex_search']").change(function () {
+                $('input:radio[name="scene_search"]:checked').prop('checked', false); /*外すという意味*/
+                let searchresult = document.getElementById("searchresult");
+                searchresult.innerHTML = ``;
+
 
                 for (var i = 0; i < localStorage.length; i++) {
                     let jsonlist = localStorage.getItem(i);
@@ -206,6 +219,11 @@
 
                     if (selectdata === chunks.danjo) {
                         console.log(chunks);
+                        console.log(chunks.titile);
+
+                        let searchresult = document.getElementById("searchresult");
+                        searchresult.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${chunks.titile}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${chunks.text}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
+                    <dd>${chunks.sien}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${chunks.danjo}</dd></dl></div >`;
 
                     };
 
@@ -215,7 +233,31 @@
                 }
             });
 
+            $("input[name='scene_search']").change(function () {
 
+                let searchresult = document.getElementById("searchresult");
+                searchresult.innerHTML = ``;
+
+                for (var i = 0; i < localStorage.length; i++) {
+                    let jsonlist = localStorage.getItem(i);
+                    let chunks = JSON.parse(jsonlist);
+                    console.log(chunks);
+
+                    const selectdata2 = $("input[name='sex_search']:checked").val();
+                    const selectdatas = $("input[name='scene_search']:checked").val();
+                    if (selectdatas === chunks.sien && selectdata2 === chunks.danjo) {
+                        console.log(chunks);
+
+                        let searchresult = document.getElementById("searchresult");
+                        searchresult.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${chunks.titile}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${chunks.text}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
+                    <dd>${chunks.sien}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${chunks.danjo}</dd></dl></div >`;
+
+                    }
+
+
+
+                }
+            });
 
             /*クリア*/
 
