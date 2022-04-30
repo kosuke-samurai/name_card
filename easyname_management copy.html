@@ -113,7 +113,7 @@
                             <label><input type="radio" name="scene_search" value="会食" class="danjo">
                                 会食</label>
                             <label><input type="radio" name="scene_search" value="プライベート" class="danjo"><span
-                                    class="otoko">プライベート</span>></label>
+                                    class="otoko">プライベート</span></label>
 
                         </div>
                     </form>
@@ -138,10 +138,24 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
         <script>
 
+
             // メニュー選択 // 
+
+            const clear = function () {
+                $('input:radio[name="sex"]:checked').prop('checked', false); /*外すという意味*/
+                $('input:radio[name="scene"]:checked').prop('checked', false); /*外すという意味*/
+                $("#text_area").val("");
+                $("#name").val("");
+                $('input:radio[name="scene_search"]:checked').prop('checked', false);
+                $('input:radio[name="sex_search"]:checked').prop('checked', false);
+            };
+            clear();
+
+
             $(function () {
                 let sec = $(".tab"); // tabのクラスを全て取得し、変数secに配列で定義
                 $(".tab").on("click", function () { // tabクリックでイベント発火
+                    clear();
                     $(".active").removeClass("active"); // activeクラスを消す
                     $(this).addClass("active"); // クリックした箇所にactiveクラスを追加
                     const index = sec.index(this); // クリックした箇所がタブの何番目か判定し、定数indexとして定義
@@ -155,11 +169,14 @@
 
 
             $("#save").on("click", function () {
+
+                let text = $("#text_area").val();
+
                 let chunk = {
                     danjo: $('input:radio[name="sex"]:checked').val(),
                     sien: $('input:radio[name="scene"]:checked').val(),
                     titile: $("#name").val(),
-                    text: $("#text_area").val(),
+                    texts: text.replace(/\r?\n/g, "<br>"),
                     date: new Date(),
                 };
                 let memoCount = parseInt(localStorage.getItem("memoCount"), 10);
@@ -170,8 +187,7 @@
 
                 localStorage.setItem(`${memoCount}`, jsonchunk);
                 localStorage.setItem("memoCount", memoCount + 1);
-                let chunktext = (chunk.text).replace(/\n/g, "<br>");
-                record.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${(chunk.titile)}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${(chunktext)}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
+                record.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${(chunk.titile)}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${(chunk.texts)}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
                     <dd>${(chunk.sien)}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${(chunk.danjo)}</dd></dl></div >`;
 
 
@@ -187,8 +203,7 @@
                     console.log(localStorage);
                     let chunk = JSON.parse(jsonchunk);
                     console.log(chunk);
-                    let chunktext = (chunk.text).replace(/\n/g, "<br>");
-                    record.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${(chunk.titile)}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${(chunktext)}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
+                    record.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${(chunk.titile)}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${(chunk.texts)}</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
                     <dd>${(chunk.sien)}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${(chunk.danjo)}</dd></dl></div >`;
 
 
@@ -229,9 +244,8 @@
                         console.log(chunks.titile);
 
                         let searchresult = document.getElementById("searchresult");
-                        let chunktexts = (chunks.text).replace(/\n/g, "<br>");
 
-                        searchresult.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${chunks.titile}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${chunktexts
+                        searchresult.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${chunks.titile}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${chunks.texts
                             }</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
                     <dd>${chunks.sien}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${chunks.danjo}</dd></dl></div >`;
 
@@ -260,9 +274,8 @@
 
                         let searchresult = document.getElementById("searchresult");
 
-                        let chunktexts = (chunks.text).replace(/\n/g, "<br>");
 
-                        searchresult.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${chunks.titile}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${chunktexts
+                        searchresult.innerHTML += `<div class=box> <dl class=profile><dt class=profileinfo>お名前</dt><dd>${chunks.titile}</dd></dl><dl class=profile><dt class=profileinfo>エピソード</dt><dd>${chunks.texts
                             }</dd></dl><dl class=profile><dt class=profileinfo>会ったシーン</dt>
                     <dd>${chunks.sien}</dd></dl><dl class=profile><dt class=profileinfo>性別</dt><dd>${chunks.danjo}</dd></dl></div >`;
 
